@@ -199,7 +199,7 @@ class _AddPageState extends State<AddPage> {
                 .document()
                 .setData({
                   "category": category,
-                  "value": value,
+                  "value": value/100,
                   "month": DateTime.now().month,
                   "day": DateTime.now().day,
 

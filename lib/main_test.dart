@@ -10,8 +10,19 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 */
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _loggedIn = false;
+
+
+
+
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,7 +32,7 @@ class MyApp extends StatelessWidget {
     );
     
   }
-  } 
+} 
   
 
   class HomePage extends StatefulWidget {

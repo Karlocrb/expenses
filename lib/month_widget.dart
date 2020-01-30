@@ -11,11 +11,11 @@ class MonthWidget extends StatefulWidget {
   final List<double> perDay;
   final Map<String, double> categories;
 
-  MonthWidget({Key key, this.documents})
+  MonthWidget({Key key, this.documents, days})
       :
         total = documents.map((doc) => doc['value'])
             .fold(0.0, (a, b) => a + b),
-        perDay = List.generate(30, (int index) {
+        perDay = List.generate(days, (int index) {
           return documents.where((doc) => doc['day'] == (index + 1))
               .map((doc) => doc['value'])
               .fold(0.0, (a, b) => a + b);
@@ -80,7 +80,8 @@ class _MonthWidgetState extends State<MonthWidget> {
 
   Widget _graph() {
     return Container(
-      height: 225.0,
+      
+      height: 220.0,
       child: GraphWidget(
     data: widget.perDay,
       ),

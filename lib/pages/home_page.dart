@@ -1,4 +1,5 @@
 import 'package:expenses/month_widget.dart';
+import 'package:expenses/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +27,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   PageController _controller;
-  int currentPage = 9;
+  int currentPage = DateTime.now().month-1;
   Stream<QuerySnapshot> _query;
 
 
@@ -94,6 +95,7 @@ class _HomePageState extends State<HomePage> {
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> data) {
               if (data.hasData) {
                 return MonthWidget(
+                  days: daysInMonth(currentPage + 1),
                   documents: data.data.documents,
                 );
               }
