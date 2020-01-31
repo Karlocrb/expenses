@@ -3,6 +3,7 @@ import 'package:expenses/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rect_getter/rect_getter.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,6 +27,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+var globalKey = RectGetter.createGlobalKey();
+Rect buttonRect;
   PageController _controller;
   int currentPage = DateTime.now().month-1;
   Stream<QuerySnapshot> _query;
@@ -75,11 +78,16 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).pushNamed('/add');
-        },
+      floatingActionButton: RectGetter(
+        key: globalKey,
+              child: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            buttonRect = RectGetter.getRectFromKey(globalKey);
+            print(buttonRect);
+            Navigator.of(context).pushNamed('/add', arguments: buttonRect);
+          },
+        ),
       ),
       body: _body(),
     );

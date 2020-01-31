@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class AddPage extends StatefulWidget {
+  final Rect buttonRect;
+
+  const AddPage({Key key, this.buttonRect}) : super(key: key);
+
   @override
   _AddPageState createState() => _AddPageState();
 }
@@ -17,34 +20,39 @@ class _AddPageState extends State<AddPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        title: Text(
-          'Gastos',
-          style: TextStyle(color: Colors.grey),
+    return Stack(children: [
+      Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          title: Text(
+            'Gastos',
+            style: TextStyle(color: Colors.grey),
+          ),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.close),
+                color: Colors.grey,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+          ],
         ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.close),
-              color: Colors.grey,
-              onPressed: () {
-                Navigator.of(context).pop();
-              }),
-        ],
+        body: _body(),
       ),
-      body: _body(),
+    ]
     );
   }
 
   Widget _body() {
+     var h = MediaQuery.of(context).size.height;
     return Column(
       children: <Widget>[
         _categorySelector(),
         _currentValue(),
         _numPad(),
+        SizedBox( height: h - widget.buttonRect.top),
         _submited(),
       ],
     );
@@ -69,7 +77,6 @@ class _AddPageState extends State<AddPage> {
           "EL Rey": FontAwesomeIcons.infinity,
           "Ins Auto": FontAwesomeIcons.infinity,
           "Ins Casa": FontAwesomeIcons.infinity,
-          
         },
         onValueChanged: (newCategory) => category = newCategory,
       ),
@@ -177,44 +184,42 @@ class _AddPageState extends State<AddPage> {
   }
 
   Widget _submited() {
-    return Builder(builder: (BuildContext context) {
-      return Hero(
-        tag: 'Agregar Gastos',
-              child: Container(
-          height: 50.0,
-          width: double.infinity,
-          decoration: BoxDecoration(color: Colors.blueAccent),
-          child: MaterialButton(
-            child: Text(
-              'Agregar Gastos',
-              style: TextStyle(color: Colors.white),
+      return Positioned(
+        top: widget.buttonRect.top,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: Builder(builder: (BuildContext context) {
+          return Container(
+            height: widget.buttonRect.top,
+            decoration: BoxDecoration(color: Colors.blueAccent),
+            child: MaterialButton(
+              child: Text(
+                'Agregar Gastos',
+                style: TextStyle(color: Colors.white,
+                fontSize: 20),
+              ),
+              onPressed: () {
+                if (value > 0 && category != null) {
+                  /*
+                              *Grabacion de Registros*
+         */
+                  Firestore.instance.collection('gastos').document().setData({
+                    "category": category,
+                    "value": value / 100,
+                    "month": DateTime.now().month,
+                    "day": DateTime.now().day,
+                  });
+                  Navigator.of(context).pop();
+                } else {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('Seleccione el valor y la categoria')));
+                }
+              },
             ),
-            onPressed: () {
-              if (value > 0 && category != null) {
-               /*
-                                    *Grabacion de Registros*
-               */
-                Firestore.instance
-                .collection('gastos')
-                .document()
-                .setData({
-                  "category": category,
-                  "value": value/100,
-                  "month": DateTime.now().month,
-                  "day": DateTime.now().day,
-
-
-                });
-                Navigator.of(context).pop();
-              } else {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text('Seleccione el valor y la categoria')));
-              }
-            },
-            
-          ),
-        ),
+          );
+        }),
       );
-    });
+    }
   }
-}
+
